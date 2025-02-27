@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np # biblioteca 
 
 # Definindo os padrões de entrada, onde cada dígito é representado por uma matriz 4x4.
 # Estas matrizes são achatadas para se tornarem vetores de 16 elementos (16 características).
@@ -27,12 +27,12 @@ X = np.array([
 # Vetor de saída esperada (targets), onde 0 representa o dígito '0' e 1 representa o dígito '1'.
 y = np.array([0, 1, 0, 1])
 
-# Inicialização aleatória dos pesos e do bias. Os pesos são inicializados com valores aleatórios
-# subtraindo 0.5 para obter uma distribuição em torno de zero. Bias é um único valor também inicializado aleatoriamente.
-pesos = np.random.rand(16) - 0.5
-bias = np.random.rand(1) - 0.5
+# Inicialização aleatória das sinapses e do bias. As sinapses são inicializadas com valores aleatórios
+# subtraindo 0.5 para obter uma distribuição em torno de zero. Bias é inicializado com 1.
+sinapse = np.random.rand(16) - 0.5
+bias = 1
 
-# Definindo a taxa de aprendizado e o número máximo de épocas para o treinamento.
+# Definindo a taxa de aprendizado e o número máximo de épocas para o treinamento (Se a taxa de aprendizado for muito alta, o modelo pode "pular" a solução ótima e não convergir corretamente.).
 taxa_aprendizado = 0.1
 epocas = 1000
 
@@ -45,13 +45,13 @@ for epoca in range(epocas):
     erro_total = 0
     for i in range(len(X)):
         # Cálculo do valor de saída do perceptron para cada exemplo de treinamento.
-        soma = np.dot(X[i], pesos) + bias
+        soma = np.dot(X[i], sinapse) + bias
         y_pred = ativacao(soma)
         # Cálculo do erro como a diferença entre a saída esperada e a predita.
         erro = y[i] - y_pred
-        # Ajuste dos pesos e bias com base no erro calculado, multiplicado pela taxa de aprendizado.
-        pesos += taxa_aprendizado * erro * X[i]
-        bias += taxa_aprendizado * erro
+        # Ajuste das sinapses com base no erro calculado, multiplicado pela taxa de aprendizado.
+        sinapse += taxa_aprendizado * erro * X[i]
+       # bias += taxa_aprendizado * erro
         erro_total += abs(erro)
     
     # Se o erro total for 0, o treinamento é interrompido, indicando convergência.
@@ -63,7 +63,7 @@ for epoca in range(epocas):
 def testar(matriz):
     # A matriz de entrada é achatada para um vetor antes de ser processada.
     vetor = np.array(matriz).flatten()
-    resultado = np.dot(vetor, pesos) + bias
+    resultado = np.dot(vetor, sinapse) + bias
     return ativacao(resultado)
 
 # Testando o perceptron com novos exemplos de dígitos '0' e '1'.
@@ -80,7 +80,14 @@ teste_1 = [
     [0, 0, 1, 0],
     [0, 0, 1, 0]
 ]
+teste_now = [
+    [0, 0, 0, 0],
+    [1, 0, 0, 0],
+    [0, 0, 1, 0],
+    [1, 1, 0, 1]
+]
 
 # Impressão dos resultados para verificar a corretude do modelo treinado.
 print("Resultado para o dígito 0:", testar(teste_0))  # Esperado: 0
 print("Resultado para o dígito 1:", testar(teste_1))  # Esperado: 1
+print("Resultado da matriz testada:", testar(teste_now))  # Esperado: 1
